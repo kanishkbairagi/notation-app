@@ -4,19 +4,31 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { useAutoSave } from './hooks/useAutoSave'
 import { useTheme } from './hooks/useTheme'
-import { smartSearch } from './utils/search'
+import { searchWithDiagnostics } from './utils/search'
+import { INITIAL_CS_PAGES } from './utils/sampleData'
 import { Sidebar } from './components/Sidebar'
 import { PageEditor } from './components/PageEditor'
+import { GraphView } from './components/GraphView'
+import { SearchDiagnosticsModal } from './components/SearchDiagnosticsModal'
 import { ThemeToggle } from './components/ThemeToggle'
 
 function App() {
-  const [pages, setPages] = useLocalStorage('notation-pages', [])
+  const [pages, setPages] = useLocalStorage('notation-pages', INITIAL_CS_PAGES)
   const [currentPageId, setCurrentPageId] = useState(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [theme, toggleTheme] = useTheme()
+  const [isGraphViewOpen, setIsGraphViewOpen] = useState(false)
+  const [showDiagnosticsModal, setShowDiagnosticsModal] = useState(false)
+
+  // Information Retrieval engine search with BM25 diagnostics
+  const searchResult = searchQuery
+    ? searchWithDiagnostics(searchQuery, pages)
+    : { pages, diagnostics: null }
+
+  const filteredPages = searchResult.pages
+  const currentDiagnostics = searchResult.diagnostics
 
   const currentPage = pages.find(p => p.id === currentPageId)
-  const filteredPages = searchQuery ? smartSearch(searchQuery, pages) : pages
 
   // Auto-save function
   const autoSavePage = useCallback((data) => {
@@ -31,15 +43,16 @@ function App() {
   useAutoSave(autoSavePage, currentPage, 1000)
 
   useEffect(() => {
-    if (pages.length > 0 && !currentPageId) {
+    // If pages exist and no page is selected, pick the first one
+    if (pages.length > 0 && (!currentPageId || !pages.some(p => p.id === currentPageId))) {
       setCurrentPageId(pages[0].id)
     }
-  }, [pages.length])
+  }, [pages, currentPageId])
 
   const handleCreatePage = () => {
     const newPage = {
       id: Date.now().toString(),
-      title: 'Untitled',
+      title: 'Untitled Note',
       blocks: [],
       pinned: false,
       createdAt: new Date().toISOString(),
@@ -48,6 +61,7 @@ function App() {
     setPages(prevPages => [newPage, ...prevPages])
     setCurrentPageId(newPage.id)
     setSearchQuery('')
+    setIsGraphViewOpen(false)
   }
 
   const handleSelectPage = (pageId) => {
@@ -77,30 +91,68 @@ function App() {
     )
   }
 
+  const handleLoadBenchmark = () => {
+    if (window.confirm('Load pre-built Computer Science benchmark knowledge base? This will reset existing notes to the interconnected CS dataset.')) {
+      setPages(INITIAL_CS_PAGES)
+      setCurrentPageId(INITIAL_CS_PAGES[0].id)
+      setSearchQuery('')
+    }
+  }
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <div className="flex h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden font-sans">
         <Sidebar
           pages={filteredPages}
           allPages={pages}
           currentPageId={currentPageId}
-          onSelectPage={handleSelectPage}
+          onSelectPage={(id) => {
+            handleSelectPage(id)
+            setIsGraphViewOpen(false)
+          }}
           onCreatePage={handleCreatePage}
           onDeletePage={handleDeletePage}
           onTogglePin={handleTogglePin}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onOpenGraph={() => setIsGraphViewOpen(true)}
+          onOpenDiagnostics={() => setShowDiagnosticsModal(true)}
+          hasDiagnostics={!!currentDiagnostics}
+          onLoadBenchmark={handleLoadBenchmark}
         />
-        <PageEditor
-          page={currentPage}
-          onUpdate={handleUpdatePage}
-          onDelete={handleDeletePage}
-        />
+
+        {isGraphViewOpen ? (
+          <GraphView
+            pages={pages}
+            onSelectPage={(id) => {
+              handleSelectPage(id)
+              setIsGraphViewOpen(false)
+            }}
+            onClose={() => setIsGraphViewOpen(false)}
+          />
+        ) : (
+          <PageEditor
+            page={currentPage}
+            allPages={pages}
+            onUpdate={handleUpdatePage}
+            onDelete={handleDeletePage}
+            onSelectPage={handleSelectPage}
+            onOpenGraph={() => setIsGraphViewOpen(true)}
+          />
+        )}
+
         <ThemeToggle theme={theme} onToggle={toggleTheme} />
+
+        {showDiagnosticsModal && (
+          <SearchDiagnosticsModal
+            diagnostics={currentDiagnostics}
+            query={searchQuery}
+            onClose={() => setShowDiagnosticsModal(false)}
+          />
+        )}
       </div>
     </DndProvider>
   )
 }
 
 export default App
-

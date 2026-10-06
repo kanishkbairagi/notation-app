@@ -20,8 +20,28 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
     editorRef.current?.focus()
   }
 
+  const insertCustomHTML = (htmlSnippet) => {
+    document.execCommand('insertHTML', false, htmlSnippet)
+    editorRef.current?.focus()
+  }
+
+  const handleInsertWikiLink = () => {
+    const linkTitle = window.prompt('Enter Page Title to Link to (e.g., CAP Theorem):')
+    if (linkTitle && linkTitle.trim()) {
+      insertCustomHTML(`&nbsp;<span class="bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono font-semibold text-xs border border-blue-300 dark:border-blue-700">[[${linkTitle.trim()}]]</span>&nbsp;`)
+    }
+  }
+
+  const handleInsertCodeSnippet = () => {
+    insertCustomHTML('<pre class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg font-mono text-xs my-2 text-indigo-600 dark:text-indigo-400 overflow-x-auto border border-gray-300 dark:border-gray-700"><code>// Algorithm snippet\nfunction bfs(graph, start) {\n  const queue = [start];\n  // ...\n}</code></pre>')
+  }
+
+  const handleInsertMath = () => {
+    insertCustomHTML('&nbsp;<code class="bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono text-xs font-semibold">$O(|V| + |E|)$</code>&nbsp;')
+  }
+
   const Toolbar = () => (
-    <div className="flex gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg">
+    <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg items-center">
       <button
         type="button"
         onClick={() => applyFormat('bold')}
@@ -50,7 +70,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('formatBlock', '<h1>')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm"
+        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm font-semibold"
         title="Heading 1"
       >
         H1
@@ -58,7 +78,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('formatBlock', '<h2>')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm"
+        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm font-semibold"
         title="Heading 2"
       >
         H2
@@ -88,6 +108,31 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       >
         1.
       </button>
+      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <button
+        type="button"
+        onClick={handleInsertWikiLink}
+        className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700/60 rounded text-xs font-mono font-medium"
+        title="Insert [[WikiLink]] cross-reference"
+      >
+        [[Link]]
+      </button>
+      <button
+        type="button"
+        onClick={handleInsertCodeSnippet}
+        className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-800/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 rounded text-xs font-mono font-medium"
+        title="Insert Code Snippet"
+      >
+        &lt;/&gt; Code
+      </button>
+      <button
+        type="button"
+        onClick={handleInsertMath}
+        className="px-2 py-1 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-800/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-700/60 rounded text-xs font-mono font-medium"
+        title="Insert Math notation"
+      >
+        fx Math
+      </button>
     </div>
   )
 
@@ -100,7 +145,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
         onInput={handleInput}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className="min-h-[200px] p-4 focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-b-lg"
+        className="min-h-[200px] p-4 focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-b-lg font-normal"
         style={{ whiteSpace: 'pre-wrap' }}
         data-placeholder={placeholder}
         suppressContentEditableWarning
@@ -115,4 +160,3 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
     </div>
   )
 }
-
