@@ -14,7 +14,9 @@ export function Sidebar({
   onOpenGraph,
   onOpenDiagnostics,
   hasDiagnostics,
-  onLoadBenchmark
+  onLoadBenchmark,
+  isMobileOpen = false,
+  onCloseMobile
 }) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -22,14 +24,30 @@ export function Sidebar({
   const unpinnedPages = pages.filter(p => !p.pinned).sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
   const isSearching = searchQuery && searchQuery.trim().length > 0
 
-  if (isCollapsed) {
+  const handleSelect = (id) => {
+    onSelectPage(id)
+    if (onCloseMobile) onCloseMobile()
+  }
+
+  const handleCreate = () => {
+    onCreatePage()
+    if (onCloseMobile) onCloseMobile()
+  }
+
+  const handleOpenGraph = () => {
+    onOpenGraph()
+    if (onCloseMobile) onCloseMobile()
+  }
+
+  // Desktop collapsed rail
+  if (isCollapsed && !isMobileOpen) {
     return (
       <button
         onClick={() => setIsCollapsed(false)}
-        className="fixed left-0 top-0 h-full w-8 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-10"
+        className="hidden md:flex fixed left-0 top-0 h-full w-8 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors z-20 items-center justify-center"
         title="Expand Sidebar"
       >
-        <svg className="w-5 h-5 mx-auto text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </button>
@@ -37,161 +55,197 @@ export function Sidebar({
   }
 
   return (
-    <div className="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen">
-      {/* Brand Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
-              N
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          onClick={onCloseMobile}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Sidebar Container: Drawer on mobile, column on desktop */}
+      <div
+        className={`
+          fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col h-screen transition-transform duration-300 ease-in-out shadow-2xl md:shadow-none
+          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+          md:static md:w-64 md:flex-shrink-0
+        `}
+      >
+        {/* Brand Header */}
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded bg-blue-600 text-white flex items-center justify-center font-bold text-xs">
+                N
+              </div>
+              <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Notation</h1>
             </div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">Notation</h1>
+
+            <div className="flex items-center gap-1">
+              {/* Desktop collapse button */}
+              <button
+                onClick={() => setIsCollapsed(true)}
+                className="hidden md:block p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500"
+                title="Collapse Sidebar"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              {/* Mobile close drawer button */}
+              <button
+                onClick={onCloseMobile}
+                className="md:hidden p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500"
+                title="Close Menu"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
-          <button
-            onClick={() => setIsCollapsed(true)}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500"
-            title="Collapse Sidebar"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        </div>
 
-        {/* Primary Action Buttons */}
-        <div className="flex flex-col gap-2">
-          <button
-            onClick={onCreatePage}
-            className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-1.5 shadow-sm"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            New Page
-          </button>
-
-          {/* Interactive Knowledge Graph View Button */}
-          <button
-            onClick={onOpenGraph}
-            className="w-full px-3 py-2 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 rounded-lg font-medium transition-colors text-xs flex items-center justify-between"
-            title="Open Force-Directed Knowledge Graph Visualizer"
-          >
-            <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Knowledge Graph
-            </span>
-            <span className="px-1.5 py-0.5 rounded bg-indigo-200 dark:bg-indigo-800 text-[10px] font-mono">
-              G=(V,E)
-            </span>
-          </button>
-        </div>
-      </div>
-
-      {/* Search Input with IR Diagnostic trigger */}
-      <div className="p-3 border-b border-gray-200 dark:border-gray-700">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Search notes (BM25)..."
-            className="w-full px-3 py-1.5 pl-8 text-xs bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <svg className="absolute left-2.5 top-2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-
-        {/* IR Diagnostics Badge when searching */}
-        {isSearching && (
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-[10px] text-gray-500 dark:text-gray-400">
-              {pages.length} results found
-            </span>
+          {/* Primary Action Buttons */}
+          <div className="flex flex-col gap-2">
             <button
-              onClick={onOpenDiagnostics}
-              className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800"
+              onClick={handleCreate}
+              className="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-lg font-medium transition-colors text-sm flex items-center justify-center gap-1.5 shadow-sm"
             >
-              <span>IR Metrics</span>
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
+              New Page
+            </button>
+
+            {/* Interactive Knowledge Graph View Button */}
+            <button
+              onClick={handleOpenGraph}
+              className="w-full px-3 py-2 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 rounded-lg font-medium transition-colors text-xs flex items-center justify-between"
+              title="Open Force-Directed Knowledge Graph Visualizer"
+            >
+              <span className="flex items-center gap-1.5">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Knowledge Graph
+              </span>
+              <span className="px-1.5 py-0.5 rounded bg-indigo-200 dark:bg-indigo-800 text-[10px] font-mono">
+                G=(V,E)
+              </span>
             </button>
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Pages List */}
-      <div className="flex-1 overflow-y-auto">
-        {pinnedPages.length > 0 && (
-          <div className="p-2">
-            <div className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Pinned
+        {/* Search Input with IR Diagnostic trigger */}
+        <div className="p-3 border-b border-gray-200 dark:border-gray-700">
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder="Search notes (BM25)..."
+              className="w-full px-3 py-1.5 pl-8 text-xs bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <svg className="absolute left-2.5 top-2 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          {/* IR Diagnostics Badge when searching */}
+          {isSearching && (
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                {pages.length} results found
+              </span>
+              <button
+                onClick={onOpenDiagnostics}
+                className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800"
+              >
+                <span>IR Metrics</span>
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </button>
             </div>
-            {pinnedPages.map(page => (
-              <PageItem
-                key={page.id}
-                page={page}
-                isActive={currentPageId === page.id}
-                onSelect={() => onSelectPage(page.id)}
-                onDelete={() => onDeletePage(page.id)}
-                onTogglePin={() => onTogglePin(page.id)}
-              />
-            ))}
-          </div>
-        )}
+          )}
+        </div>
 
-        {unpinnedPages.length > 0 && (
-          <div className="p-2">
-            {pinnedPages.length > 0 && (
+        {/* Pages List */}
+        <div className="flex-1 overflow-y-auto">
+          {pinnedPages.length > 0 && (
+            <div className="p-2">
               <div className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                Pages
+                Pinned
               </div>
-            )}
-            {unpinnedPages.map(page => (
-              <PageItem
-                key={page.id}
-                page={page}
-                isActive={currentPageId === page.id}
-                onSelect={() => onSelectPage(page.id)}
-                onDelete={() => onDeletePage(page.id)}
-                onTogglePin={() => onTogglePin(page.id)}
-              />
-            ))}
-          </div>
-        )}
+              {pinnedPages.map(page => (
+                <PageItem
+                  key={page.id}
+                  page={page}
+                  isActive={currentPageId === page.id}
+                  onSelect={() => handleSelect(page.id)}
+                  onDelete={() => onDeletePage(page.id)}
+                  onTogglePin={() => onTogglePin(page.id)}
+                />
+              ))}
+            </div>
+          )}
 
-        {isSearching && pages.length === 0 && (
-          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-            <p className="text-sm">No results found</p>
-            <p className="text-xs mt-1">Try a different search term</p>
-          </div>
-        )}
+          {unpinnedPages.length > 0 && (
+            <div className="p-2">
+              {pinnedPages.length > 0 && (
+                <div className="px-2 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Pages
+                </div>
+              )}
+              {unpinnedPages.map(page => (
+                <PageItem
+                  key={page.id}
+                  page={page}
+                  isActive={currentPageId === page.id}
+                  onSelect={() => handleSelect(page.id)}
+                  onDelete={() => onDeletePage(page.id)}
+                  onTogglePin={() => onTogglePin(page.id)}
+                />
+              ))}
+            </div>
+          )}
 
-        {!isSearching && allPages && allPages.length === 0 && (
-          <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-            <p className="text-sm">No pages yet</p>
-            <p className="text-xs mt-1">Create your first page!</p>
-          </div>
-        )}
+          {isSearching && pages.length === 0 && (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <p className="text-sm">No results found</p>
+              <p className="text-xs mt-1">Try a different search term</p>
+            </div>
+          )}
+
+          {!isSearching && allPages && allPages.length === 0 && (
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+              <p className="text-sm">No pages yet</p>
+              <p className="text-xs mt-1">Create your first page!</p>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar Footer: Benchmark Reset Button */}
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-900/50">
+          <button
+            onClick={() => {
+              onLoadBenchmark()
+              if (onCloseMobile) onCloseMobile()
+            }}
+            className="w-full py-1.5 px-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-[11px] font-mono transition-colors flex items-center justify-center gap-1.5"
+            title="Load pre-built Computer Science knowledge graph for benchmarking"
+          >
+            <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Load CS Benchmark Notes
+          </button>
+        </div>
       </div>
-
-      {/* Sidebar Footer: Benchmark Reset Button */}
-      <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-100/50 dark:bg-gray-900/50">
-        <button
-          onClick={onLoadBenchmark}
-          className="w-full py-1.5 px-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded text-[11px] font-mono transition-colors flex items-center justify-center gap-1.5"
-          title="Load pre-built Computer Science knowledge graph for benchmarking"
-        >
-          <svg className="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Load CS Benchmark Notes
-        </button>
-      </div>
-    </div>
+    </>
   )
 }
 
@@ -217,7 +271,7 @@ function PageItem({ page, isActive, onSelect, onDelete, onTogglePin }) {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1 opacity-70 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
           <button
             onClick={(e) => {
               e.stopPropagation()

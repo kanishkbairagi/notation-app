@@ -33,7 +33,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
   }
 
   const handleInsertCodeSnippet = () => {
-    insertCustomHTML('<pre class="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg font-mono text-xs my-2 text-indigo-600 dark:text-indigo-400 overflow-x-auto border border-gray-300 dark:border-gray-700"><code>// Algorithm snippet\nfunction bfs(graph, start) {\n  const queue = [start];\n  // ...\n}</code></pre>')
+    insertCustomHTML('<pre class="bg-gray-100 dark:bg-gray-800 p-2.5 rounded-lg font-mono text-[11px] sm:text-xs my-2 text-indigo-600 dark:text-indigo-400 overflow-x-auto border border-gray-300 dark:border-gray-700"><code>// Algorithm snippet\nfunction bfs(graph, start) {\n  const queue = [start];\n  // ...\n}</code></pre>')
   }
 
   const handleInsertMath = () => {
@@ -41,11 +41,11 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
   }
 
   const Toolbar = () => (
-    <div className="flex flex-wrap gap-1 p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg items-center">
+    <div className="flex flex-wrap gap-1 p-1.5 sm:p-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 rounded-t-lg items-center">
       <button
         type="button"
         onClick={() => applyFormat('bold')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm font-bold"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm font-bold"
         title="Bold"
       >
         B
@@ -53,7 +53,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('italic')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm italic"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm italic"
         title="Italic"
       >
         I
@@ -61,16 +61,16 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('underline')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm underline"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm underline"
         title="Underline"
       >
         U
       </button>
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <div className="w-px h-5 sm:h-6 bg-gray-300 dark:bg-gray-600 mx-0.5" />
       <button
         type="button"
         onClick={() => applyFormat('formatBlock', '<h1>')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm font-semibold"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm font-semibold"
         title="Heading 1"
       >
         H1
@@ -78,7 +78,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('formatBlock', '<h2>')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm font-semibold"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm font-semibold"
         title="Heading 2"
       >
         H2
@@ -86,16 +86,16 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('formatBlock', '<p>')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm"
         title="Paragraph"
       >
         P
       </button>
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <div className="w-px h-5 sm:h-6 bg-gray-300 dark:bg-gray-600 mx-0.5" />
       <button
         type="button"
         onClick={() => applyFormat('insertUnorderedList')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm"
         title="Bullet List"
       >
         •
@@ -103,35 +103,35 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
       <button
         type="button"
         onClick={() => applyFormat('insertOrderedList')}
-        className="px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-sm"
+        className="px-1.5 sm:px-2 py-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-xs sm:text-sm"
         title="Numbered List"
       >
         1.
       </button>
-      <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1" />
+      <div className="w-px h-5 sm:h-6 bg-gray-300 dark:bg-gray-600 mx-0.5" />
       <button
         type="button"
         onClick={handleInsertWikiLink}
-        className="px-2 py-1 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700/60 rounded text-xs font-mono font-medium"
-        title="Insert [[WikiLink]] cross-reference"
+        className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-800/50 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-blue-700/60 rounded text-[11px] sm:text-xs font-mono font-medium"
+        title="Insert [[WikiLink]]"
       >
         [[Link]]
       </button>
       <button
         type="button"
         onClick={handleInsertCodeSnippet}
-        className="px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-800/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 rounded text-xs font-mono font-medium"
+        className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 dark:hover:bg-indigo-800/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/60 rounded text-[11px] sm:text-xs font-mono font-medium"
         title="Insert Code Snippet"
       >
-        &lt;/&gt; Code
+        &lt;/&gt;
       </button>
       <button
         type="button"
         onClick={handleInsertMath}
-        className="px-2 py-1 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-800/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-700/60 rounded text-xs font-mono font-medium"
+        className="px-1.5 sm:px-2 py-0.5 sm:py-1 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-800/50 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-purple-700/60 rounded text-[11px] sm:text-xs font-mono font-medium"
         title="Insert Math notation"
       >
-        fx Math
+        fx
       </button>
     </div>
   )
@@ -145,7 +145,7 @@ export function RichTextEditor({ content, onChange, placeholder = 'Start writing
         onInput={handleInput}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        className="min-h-[200px] p-4 focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-b-lg font-normal"
+        className="min-h-[140px] sm:min-h-[180px] p-3 sm:p-4 focus:outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 rounded-b-lg font-normal text-xs sm:text-sm"
         style={{ whiteSpace: 'pre-wrap' }}
         data-placeholder={placeholder}
         suppressContentEditableWarning

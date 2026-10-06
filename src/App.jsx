@@ -19,6 +19,7 @@ function App() {
   const [theme, toggleTheme] = useTheme()
   const [isGraphViewOpen, setIsGraphViewOpen] = useState(false)
   const [showDiagnosticsModal, setShowDiagnosticsModal] = useState(false)
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   // Information Retrieval engine search with BM25 diagnostics
   const searchResult = searchQuery
@@ -62,11 +63,13 @@ function App() {
     setCurrentPageId(newPage.id)
     setSearchQuery('')
     setIsGraphViewOpen(false)
+    setIsMobileSidebarOpen(false)
   }
 
   const handleSelectPage = (pageId) => {
     setCurrentPageId(pageId)
     setSearchQuery('')
+    setIsMobileSidebarOpen(false)
   }
 
   const handleUpdatePage = (updatedPage) => {
@@ -96,12 +99,13 @@ function App() {
       setPages(INITIAL_CS_PAGES)
       setCurrentPageId(INITIAL_CS_PAGES[0].id)
       setSearchQuery('')
+      setIsMobileSidebarOpen(false)
     }
   }
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden font-sans">
+      <div className="flex h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-hidden font-sans relative">
         <Sidebar
           pages={filteredPages}
           allPages={pages}
@@ -115,10 +119,15 @@ function App() {
           onTogglePin={handleTogglePin}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          onOpenGraph={() => setIsGraphViewOpen(true)}
+          onOpenGraph={() => {
+            setIsGraphViewOpen(true)
+            setIsMobileSidebarOpen(false)
+          }}
           onOpenDiagnostics={() => setShowDiagnosticsModal(true)}
           hasDiagnostics={!!currentDiagnostics}
           onLoadBenchmark={handleLoadBenchmark}
+          isMobileOpen={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
         />
 
         {isGraphViewOpen ? (
@@ -138,6 +147,7 @@ function App() {
             onDelete={handleDeletePage}
             onSelectPage={handleSelectPage}
             onOpenGraph={() => setIsGraphViewOpen(true)}
+            onOpenSidebar={() => setIsMobileSidebarOpen(true)}
           />
         )}
 
