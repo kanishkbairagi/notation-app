@@ -1,4 +1,4 @@
-# Notation — Knowledge Graph & Modular Block-Tree Workspace
+# Notation Knowledge Graph & Modular Block-Tree Workspace
 
 > An algorithmic knowledge management system and modular editor featuring an **HTML5 Canvas Force-Directed Knowledge Graph**, **Okapi BM25 Information Retrieval Engine**, **Prefix Trie Autocompletion**, and **Hierarchical Document AST Serialization**.
 
