@@ -24,10 +24,6 @@ To evaluate client-side responsiveness, memory stability, and graph simulation p
 | **Search Query Latency** | **< 1.2 ms (Sub-millisecond)** | Microsecond Client Profiler |
 | **Canvas Frame Rate** | **Stable 60 FPS** | RequestAnimationFrame Euler Physics Loop |
 
-<p align="center">
-  <img src="./public/telemetry-analytics.png" alt="Live Traffic and Interaction Telemetry" width="48%" />
-  <img src="./public/telemetry-geography.png" alt="Geographic and Operating System Distribution" width="48%" />
-</p>
 
 > **Key Architectural Takeaway:** Validated cross-platform execution across 5 operating system kernels (Linux, Darwin/macOS, Windows NT, Android, iOS) with zero runtime crash reports and sustained sub-1.2ms local retrieval latency.
 
