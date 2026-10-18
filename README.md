@@ -3,7 +3,7 @@
 > An algorithmic knowledge management workspace and modular editor featuring an **HTML5 Canvas Force-Directed Knowledge Graph**, **Okapi BM25 Information Retrieval Engine**, **Prefix Trie Autocompletion**, and **Hierarchical Document AST Serialization**.
 
 [![Live Production Demo](https://img.shields.io/badge/Live%20Demo-notation--app--six.vercel.app-10b981?style=for-the-badge&logo=vercel)](https://notation-app-six.vercel.app)
-[![Production Telemetry](https://img.shields.io/badge/Verified%20Traffic-60%2B%20Visitors%20%7C%2090%2B%20Page%20Views-3b82f6?style=for-the-badge)](https://notation-app-six.vercel.app)
+[![Production Telemetry](https://img.shields.io/badge/Verified%20Traffic-70%2B%20Visitors%20%7C%20110%2B%20Page%20Views-3b82f6?style=for-the-badge)](https://notation-app-six.vercel.app)
 [![Search Latency](https://img.shields.io/badge/BM25%20Query%20Latency-%3C%201.2ms-6366f1?style=for-the-badge)](#algorithmic-complexity)
 [![Algorithm Complexity](https://img.shields.io/badge/BFS%20Traversal-O(%7CV%7C%20%2B%20%7CE%7C)-f59e0b?style=for-the-badge)](#algorithmic-complexity)
 
@@ -17,8 +17,8 @@ To evaluate client-side responsiveness, memory stability, and graph simulation p
 
 | Telemetry Dimension | Production Metric | Verification Source |
 | :--- | :--- | :--- |
-| **Unique Global Visitors** | **60+ Verified Users** | Vercel Web Analytics |
-| **Total Page Views** | **90+ Document & Graph Views** | Vercel Edge Telemetry |
+| **Unique Global Visitors** | **70+ Verified Users** | Vercel Web Analytics |
+| **Total Page Views** | **110+ Document & Graph Views** | Vercel Edge Telemetry |
 | **Geographic Diversity** | **7 Countries (4 Continents)** | India, United States, Brazil, Germany, France, Spain, Sweden, Greece |
 | **Platform Distribution** | **75% Mobile / 25% Desktop** | Android (53%), Windows (25%), iOS (14%), macOS (6%), GNU/Linux (3%) |
 | **Search Query Latency** | **< 1.2 ms (Sub-millisecond)** | Microsecond Client Profiler |
